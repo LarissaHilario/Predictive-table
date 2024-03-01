@@ -1,54 +1,52 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
-
-import {
-  validateVariableDeclaration
-} from "../type/pila"; 
+import { validateDeclaration } from "../type/pila";
 
 export default function CodeEditor() {
   const [validationResult, setValidationResult] = useState(null);
 
-  const onChange = useCallback((value) => {
-    const result = validateVariableDeclaration(value);
-    setValidationResult(result);       
+  const handleChange = useCallback((value) => {
+    const result = validateDeclaration(value);
+    setValidationResult(result);
   }, []);
   
+
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="lg:text-left max-w-max mb-[1000px] ">
-          <CodeMirror
-            value=""
+        <div className="lg:text-left max-w-max mb-[1000px]">
+        <CodeMirror
+            
+            value=''
             height="400px"
             width="600px"
             theme="dark"
-            onChange={onChange}
             className="py-2 static flex items-center"
+          
+            onChange={handleChange}
           />
-          {validationResult && (
-            <>
-            <div className="bg-red-100 text-purple-500 p-4 mt-4">
-            {validationResult.message}
-        </div>
-        <div className="bg-red-100 text-black p-4 mt-14">
-                {validationResult.stackContent.map((item, index) => (
-                  <div key={index}>{item}</div>
-                ))}
-              </div>
-        </>
-        
-      )}
-        </div>
+         
+         {validationResult && (
+  <div className={`bg-${validationResult.esValida ? "green" : "red"}-100 text-pink-500 p-4 mt-4 rounded-md shadow-md`}>
+    <p className="text-center">
+      {validationResult.esValida
+        ? "Cadena válida"
+        : `Cadena no válida: ${validationResult.reportarError}`}
+    </p>
+    {validationResult.infostack.map((item, index) => (
+      <div key={index} className="mt-2">{item}</div>
+    ))}
+  </div>
+)}
+</div>
 
         <div className="mb-[800px] pr-40">
-          
-            <div className="w-24 rounded">
-              
-              <h1 className="text-5xl font-bold text-primary">Tabla Predictiva </h1>
-            </div>
-        
-          <p className="py-6"> Gramática 7. Larissa Hilario Clemente</p>
-          
+          <div className="w-24 rounded">
+            <h1 className="text-5xl font-bold text-primary">Tabla Predictiva</h1>
+          </div>
+
+          <p className="py-6">Gramática 7. Larissa Hilario Clemente</p>
+
           <div className="mockup-code w-14">
             <pre data-prefix="1"><code>S = I A B V</code></pre>
             <pre data-prefix="2"><code>A = automata</code></pre>
@@ -65,12 +63,16 @@ export default function CodeEditor() {
             <pre data-prefix="13"><code>R = , N R or ε</code></pre>
             <pre data-prefix="14"><code>I = {"{"}</code></pre>
           </div>
-
-
-        
-
         </div>
       </div>
     </div>
   );
-}          
+}
+// Función de debounce
+function debounce(func, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
