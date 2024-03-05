@@ -27,7 +27,7 @@ function getProduction(noTerminal, next) {
     "C": /[a]/.test(next) ? ["aceptacion"] : null,
     "V": /^}$/.test(next) ? [next] : null,
     "I":  /^{$/.test(next) ? [next] : null,
-    "SM": /[a-z0-9]/.test(next) ? [next] : null,
+    "SM": /^[a-z0-9]$/i.test(next) ? [next] : null,
     "N": /^q[0-9]$/.test(next) ? [next] : null
   };
 
